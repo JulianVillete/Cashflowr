@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>CashFlowr - Personal Finance Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  
+  <!-- Authentication Modal -->
+  <div id="authModal" class="auth-modal" style="display: none;">
+    <div class="auth-container">
+      <div class="auth-header">
+        <h1>💸 CashFlowr</h1>
+        <p>Manage your finances with confidence</p>
+      </div>
+      
+      <!-- Login Form -->
+      <div id="loginForm" class="auth-form active">
+        <h2>Welcome Back</h2>
+        <form id="loginFormElement">
+          <div class="form-group">
+            <input type="email" id="loginEmail" placeholder="Email" required>
+          </div>
+          <div class="form-group">
+            <input type="password" id="loginPassword" placeholder="Password" required>
+          </div>
+          <button type="submit" class="auth-btn">Sign In</button>
+        </form>
+        <div class="auth-switch">
+          <p>Don't have an account? <a href="#" id="showSignup">Sign up</a></p>
+        </div>
+      </div>
+      
+      <!-- Signup Form -->
+      <div id="signupForm" class="auth-form">
+        <h2>Create Account</h2>
+        <form id="signupFormElement">
+          <div class="form-group">
+            <input type="text" id="signupName" placeholder="Full Name" required>
+          </div>
+          <div class="form-group">
+            <input type="email" id="signupEmail" placeholder="Email" required>
+          </div>
+          <div class="form-group">
+            <input type="password" id="signupPassword" placeholder="Password" required minlength="6">
+          </div>
+          <div class="form-group">
+            <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" required>
+          </div>
+          <button type="submit" class="auth-btn">Create Account</button>
+        </form>
+        <div class="auth-switch">
+          <p>Already have an account? <a href="#" id="showLogin">Sign in</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="mainApp">
+  <header>
+    <div class="header-left">
+      <h1>💸 CashFlowr</h1>
+      <span id="userGreeting" class="user-greeting">Welcome back!</span>
+    </div>
+    <div class="header-right">
+      <button id="userMenuBtn" class="user-menu-btn">
+        <span id="userInitials" class="user-initials">U</span>
+      </button>
+      <button id="theme-toggle">🌙 Dark Mode</button>
+    </div>
+  </header>
+
+  <!-- User Menu Dropdown -->
+  <div id="userMenu" class="user-menu">
+    <div class="user-info">
+      <div class="user-avatar">
+        <span id="userMenuInitials" class="user-initials">U</span>
+      </div>
+      <div class="user-details">
+        <h3 id="userMenuName">User Name</h3>
+        <p id="userMenuEmail">user@example.com</p>
+      </div>
+    </div>
+    <div class="user-menu-actions">
+      <button id="signInBtn" class="menu-action-btn" style="display: none;">
+        <span>🔑</span> Sign In
+      </button>
+      <button id="logoutBtn" class="menu-action-btn">
+        <span>🚪</span> Logout
+      </button>
+    </div>
+  </div>
+
+  <main>
+    <!-- Add Transaction Form -->
+    <section id="transactionForm" class="transaction-form">
+      <h2>Add Transaction</h2>
+      <form id="transactionFormElement">
+        <input type="text" id="desc" placeholder="Description" required>
+        <input type="number" id="amount" placeholder="Amount" required>
+        <select id="type">
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <select id="category">
+          <option value="">Select Category</option>
+          <optgroup label="Income Categories">
+            <option value="salary">Salary</option>
+            <option value="freelance">Freelance</option>
+            <option value="investment">Investment</option>
+            <option value="business">Business</option>
+            <option value="other-income">Other Income</option>
+          </optgroup>
+          <optgroup label="Expense Categories">
+            <option value="food">Food & Dining</option>
+            <option value="transportation">Transportation</option>
+            <option value="housing">Housing</option>
+            <option value="utilities">Utilities</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="shopping">Shopping</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="education">Education</option>
+            <option value="other-expense">Other Expense</option>
+          </optgroup>
+        </select>
+        <select id="currency">
+          <option value="PHP">₱ PHP (Philippine Peso)</option>
+          <option value="USD">$ USD (US Dollar)</option>
+          <option value="EUR">€ EUR (Euro)</option>
+          <option value="JPY">¥ JPY (Japanese Yen)</option>
+        </select>
+        <button type="submit">Add</button>
+      </form>
+    </section>
+
+    <!-- Balance Summary -->
+    <section class="summary">
+      <h2>Summary</h2>
+      <p>Total Income: <span id="totalIncome">0</span></p>
+      <p>Total Expense: <span id="totalExpense">0</span></p>
+      <p>Balance: <span id="balance">0</span></p>
+    </section>
+
+    <!-- Currency Settings -->
+    <section class="currency-settings">
+      <h2>Currency Settings</h2>
+      <div class="currency-controls">
+        <div class="currency-selector">
+          <label for="defaultCurrency">Default Currency:</label>
+          <select id="defaultCurrency">
+            <option value="PHP">₱ PHP (Philippine Peso)</option>
+            <option value="USD">$ USD (US Dollar)</option>
+            <option value="EUR">€ EUR (Euro)</option>
+            <option value="JPY">¥ JPY (Japanese Yen)</option>
+          </select>
+        </div>
+        <div class="exchange-rates">
+          <button id="updateRates" class="update-rates-btn">🔄 Update Exchange Rates</button>
+          <div id="ratesStatus" class="rates-status">Last updated: Never</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Savings Goal -->
+    <section id="savings-goal" class="savings-goal">
+      <h2>Savings Goal</h2>
+      <div class="goal-input">
+        <input type="number" id="goalAmount" placeholder="Set savings goal amount">
+        <button id="setGoal">Set Goal</button>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text">
+          <span id="progressAmount">₱0</span> / <span id="goalAmountDisplay">₱0</span>
+          <span id="progressPercentage">0%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transactions List -->
+    <section class="transactions">
+      <h2>Transactions</h2>
+      
+      <!-- Filters -->
+      <div class="filters">
+        <div class="filter-group">
+          <label for="filterType">Type:</label>
+          <select id="filterType">
+            <option value="">All Types</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filterCategory">Category:</label>
+          <select id="filterCategory">
+            <option value="">All Categories</option>
+            <optgroup label="Income Categories">
+              <option value="salary">Salary</option>
+              <option value="freelance">Freelance</option>
+              <option value="investment">Investment</option>
+              <option value="business">Business</option>
+              <option value="other-income">Other Income</option>
+            </optgroup>
+            <optgroup label="Expense Categories">
+              <option value="food">Food & Dining</option>
+              <option value="transportation">Transportation</option>
+              <option value="housing">Housing</option>
+              <option value="utilities">Utilities</option>
+              <option value="entertainment">Entertainment</option>
+              <option value="shopping">Shopping</option>
+              <option value="healthcare">Healthcare</option>
+              <option value="education">Education</option>
+              <option value="other-expense">Other Expense</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filterDate">Date Range:</label>
+          <select id="filterDate">
+            <option value="">All Time</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="year">This Year</option>
+          </select>
+        </div>
+        <button id="clearFilters" class="clear-filters-btn">Clear Filters</button>
+      </div>
+      
+      <ul id="transactionList"></ul>
+    </section>
+
+    <!-- Export & Import -->
+    <section id="export-import" class="export-import">
+      <h2>Export & Import</h2>
+      <div class="export-import-controls">
+        <div class="export-section">
+          <h3>Export Data</h3>
+          <p>Download your transactions to backup or migrate to another device</p>
+          <div class="export-buttons">
+            <button id="exportCSV" class="export-btn csv-btn">
+              📊 Export as CSV
+            </button>
+            <button id="exportJSON" class="export-btn json-btn">
+              📄 Export as JSON
+            </button>
+          </div>
+        </div>
+        
+        <div class="import-section">
+          <h3>Import Data</h3>
+          <p>Upload previously exported data to restore or migrate transactions</p>
+          <div class="import-controls">
+            <div class="file-input-wrapper">
+              <input type="file" id="importFile" accept=".csv,.json" style="display: none;">
+              <button id="importBtn" class="import-btn">
+                📁 Choose File
+              </button>
+              <span id="fileName" class="file-name">No file selected</span>
+            </div>
+            <button id="processImport" class="process-btn" disabled>
+              ⬆️ Import Data
+            </button>
+          </div>
+          <div class="import-info">
+            <small>Supported formats: CSV, JSON (previously exported from CashFlowr)</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <section id="expenseChart" class="charts">
+      <h2>Spending Overview</h2>
+      <canvas id="expenseChartCanvas"></canvas>
+    </section>
+  </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>💸 CashFlowr</h3>
+        <p>Your personal finance companion for tracking expenses, managing budgets, and achieving financial goals.</p>
+        <div class="social-links">
+          <a href="https://github.com/JulianVillete" class="social-link" target="_blank" rel="noopener">
+            <span>🐙</span> GitHub
+          </a>
+          <a href="https://www.facebook.com/julian.villete.2025" class="social-link" target="_blank" rel="noopener">
+            <span>📘</span> Facebook
+          </a>
+          <a href="www.linkedin.com/in/julian-villete-a93ab9369" class="social-link" target="_blank" rel="noopener">
+            <span>💼</span> LinkedIn
+          </a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h4 style="color: white;">Features</h4>
+        <div class="footer-links">
+          <a href="#transactionForm">Add Transactions</a>
+          <a href="#savings-goal">Savings Goals</a>
+          <a href="#export-import">Export/Import</a>
+          <a href="#expenseChart">Analytics</a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h4 style="color: white;">Resources</h4>
+        <div class="footer-links">
+          <a href="#">Documentation</a>
+          <a href="#">API Reference</a>
+          <a href="#">Support</a>
+          <a href="#">Privacy Policy</a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h4 style="color: white;">Company</h4>
+        <div class="footer-links">
+          <a href="#">About Us</a>
+          <a href="#">Contact</a>
+          <a href="#">Careers</a>
+          <a href="#">Blog</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <p>&copy; 2025 CashFlowr. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script/script.js"></script>
+</body>
+</html>
